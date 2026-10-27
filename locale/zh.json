@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Jev 重点高亮",
+    "description": "用 TypeSafe Jev 判断 agent 流式输出中的语义单元，按置信度强度高亮用户最需要的重点内容。"
+  }
+}

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jev highlight fixture</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --fg: #0f1115;
+        --muted: #61666b;
+        --line: #e3e5e8;
+        --card: #ffffff;
+        --page: #f5f6f8;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 24px 16px 120px;
+        background: var(--page);
+        color: var(--fg);
+        font: 14px/1.65 -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      }
+      #fixture-status {
+        max-width: 760px;
+        margin: 0 auto 12px;
+        padding: 6px 10px;
+        border: 1px dashed #c9ccd1;
+        border-radius: 8px;
+        background: #fff;
+        color: var(--muted);
+        font-size: 12px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        white-space: pre-wrap;
+      }
+      .transcript { max-width: 760px; margin: 0 auto; }
+      .chat-flow { display: flex; flex-direction: column; gap: 14px; }
+      .frame_root { display: flex; gap: 10px; }
+      .frame_body {
+        flex: 1;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px 18px;
+        min-width: 0;
+      }
+      ._markdown_1ypvv_5 > *:first-child { margin-top: 0; }
+      ._markdown_1ypvv_5 h2 { font-size: 16px; margin: 18px 0 8px; }
+      ._markdown_1ypvv_5 p { margin: 10px 0; }
+      ._markdown_1ypvv_5 ul { margin: 8px 0; padding-left: 22px; }
+      ._markdown_1ypvv_5 li { margin: 4px 0; }
+      ._markdown_1ypvv_5 code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        background: #f1f2f4;
+        border-radius: 4px;
+        padding: 1px 4px;
+      }
+      ._block_7gxqk_4 { margin: 12px 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+      ._bannerWrap_7gxqk_24 { padding: 6px 12px; font-size: 11px; color: var(--muted); background: #f7f8f9; border-bottom: 1px solid var(--line); }
+      ._content_7gxqk_74 { background: #fbfbfc; padding: 10px 14px; overflow: auto; }
+      pre._plain_7gxqk_103 { margin: 0; }
+      pre._plain_7gxqk_103 code { background: none; padding: 0; white-space: pre; font-size: 12.5px; }
+      ._tableScroll_1ypvv_192 { overflow: auto; margin: 12px 0; border: 1px solid var(--line); border-radius: 10px; }
+      table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      th, td { text-align: left; padding: 7px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+      th { background: #f7f8f9; font-weight: 600; }
+      tr:last-child td { border-bottom: 0; }
+      .user-bubble {
+        align-self: flex-end;
+        max-width: 70%;
+        background: #eef1f6;
+        border-radius: 12px;
+        padding: 9px 14px;
+        color: #333a44;
+      }
+      .tool-call { font-size: 12px; color: var(--muted); border-left: 2px solid var(--line); padding-left: 10px; margin-left: 4px; }
+      aside[data-slot='sidebar'] {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 180px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .composer {
+        position: fixed;
+        left: 50%;
+        bottom: 16px;
+        transform: translateX(-50%);
+        width: min(680px, calc(100vw - 32px));
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(15, 17, 21, 0.08);
+        padding: 12px 14px 8px;
+      }
+      .composer-editor { min-height: 28px; color: #333a44; outline: none; }
+      .composer-dock { display: flex; gap: 12px; align-items: center; justify-content: center; padding: 4px 0 0; }
+      #dock-outlet { display: contents; }
+      .fixture-note { max-width: 760px; margin: 16px auto 0; color: var(--muted); font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <div id="fixture-status">fixture: loading…</div>
+
+    <div id="root">
+      <div class="transcript" data-conversation-region="chat" data-conversation-session="session-fixture-0001">
+        <div data-conversation-scroll>
+          <div class="chat-flow" data-chat-flow>
+            <div class="user-bubble" data-chat-flow-kind="user" data-chat-node-key="1:user">
+              <div data-slot="conversation.chat.node">用简短 markdown 回答，并包含一个代码块和一个表格。</div>
+            </div>
+
+            <div class="tool-call" data-chat-flow-kind="tool-call" data-chat-node-key="2:tool-call">
+              <div data-slot="conversation.chat.node">tool output: 注意：0.45–0.65 区间属于弱信号，不应按中等强度渲染。（工具输出，不能高亮）</div>
+            </div>
+
+            <div data-chat-flow-kind="assistant-step" data-chat-group-part="response" data-chat-node-key="3:assistant-step" data-chat-turn="1">
+              <div data-slot="conversation.chat.node">
+                <div class="frame_root">
+                  <div class="frame_body">
+                    <div class="_markdown_1ypvv_5" id="markdown-1">
+                      <p id="p-inline">Priority 计算结果：<code>priority</code> 是 <strong>加权</strong> 后的核心指标。</p>
+
+                      <h2>要点</h2>
+                      <ul>
+                        <li id="li-stream">列表项一：流式增长的目标文本 <strong>正在</strong> 追加。</li>
+                      </ul>
+
+                      <div class="_block_7gxqk_4 md-code-block" data-code-wrap="true">
+                        <div class="_bannerWrap_7gxqk_24">javascript</div>
+                        <div class="_content_7gxqk_74" data-code-block-content="true">
+                          <pre class="_plain_7gxqk_103"><code id="code-1">const hl = new Highlight(range)
+CSS.highlights.set('jev-low', hl)</code></pre>
+                        </div>
+                      </div>
+
+                      <div class="_tableScroll_1ypvv_192 _tableFill_1ypvv_239">
+                        <table>
+                          <thead>
+                            <tr><th>名称</th><th>说明</th></tr>
+                          </thead>
+                          <tbody>
+                            <tr id="row-priority"><td><code>priority</code></td><td>0.5×核心 + 0.3×可执行</td></tr>
+                            <tr id="row-level"><td>level</td><td>critical / medium / low</td></tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <p id="p-warning">注意：0.45–0.65 区间属于弱信号，不应按中等强度渲染。</p>
+                      <div id="append-area"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="composer" data-composer-card="true" data-composer-seat="">
+        <div class="composer-editor" data-lexical-editor="true" contenteditable="true" id="composer-editor">composer text: priority highlighter 不应被搜索</div>
+        <div data-slot="conversation.composer">
+          <div data-composer-dock="true">
+            <div class="composer-dock">
+              <div id="dock-outlet" data-slot="conversation.composer.dock"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside data-slot="sidebar" data-side="sidebar">
+      <div>sidebar priority message</div>
+    </aside>
+
+    <p class="fixture-note">
+      只读 fixture：assistant 消息里包含 paragraph / list / code block / table row / warning；
+      composer、sidebar、tool-call 为排除区。高亮由 CSS Custom Highlight API 绘制，DOM 不得变化。
+    </p>
+
+    <script src="./fixture-driver.js"></script>
+    <script src="/lib/client.js"></script>
+    <script>
+      window.__bootFixture()
+    </script>
+  </body>
+</html>

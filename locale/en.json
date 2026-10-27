@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Jev Highlight",
+    "description": "Judges streamed agent content units with TypeSafe Jev and highlights the user's most important output, ranked by confidence."
+  }
+}

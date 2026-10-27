@@ -1,0 +1,29 @@
+# Lead-owned E2E overlay for independent verification.
+# Used ONLY with a throwaway profile (`--profile test-lead`), never the real web
+# or desktop profile. Two deltas from cordis.debug.yml:
+#   1. the model route uses the signed-in account (deepseek-account), so the
+#      test instance streams answers without DEEPSEEK_API_KEY;
+#   2. Jev points at the local mock (scripts/mock-jev-server.mjs) because the
+#      real TypeSafe API answers HTTP 451 "not available in your region" here.
+- id: agent-default-model
+  name: '@deepseek-ai/dsh-agent-default-model'
+  config:
+    provider: deepseek-account
+    model: deepseek-flash
+- insert:
+    - id: jev-highlight
+      name: ./lib/index.js
+      config:
+        provider: jev
+        jevBaseUrl: http://127.0.0.1:10499
+        model: jev-1.13.0
+        maxConcurrency: 8
+        requestTokenBudget: 24000
+        unitTokenBudget: 20000
+        cacheCapacity: 500
+        requestTimeoutMs: 30000
+        highlightThresholds:
+          critical: 0.85
+          medium: 0.65
+          low: 0.45
+        autoStart: true

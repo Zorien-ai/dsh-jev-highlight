@@ -1,0 +1,67 @@
+{
+  "labels": {
+    "critical": "必须优先阅读：直接回答用户问题，同时包含可执行修复/步骤和实质性风险",
+    "medium": "重要但非最优先：直接答案、可执行步骤或定义，缺少风险与动作的组合",
+    "low": "弱相关：单独的提醒、次要动作或泛泛建议，不能单独回答用户问题",
+    "none": "无信息量：寒暄、过渡、泛泛而谈，不构成答案"
+  },
+  "questions": {
+    "deploy": "线上服务要升级到 v2，应该怎么安全发布？",
+    "rag": "RAG 检索效果不好，应该怎么排查和优化？",
+    "refund": "客户重复扣费并申请退款，应该怎么处理？",
+    "review": "审查这段 Node 服务代码，指出风险和修复步骤。"
+  },
+  "items": [
+    { "id": "C01", "label": "critical", "question": "deploy", "text": "核心结论：必须先做数据库迁移再灰度；否则 v1 节点会写入不兼容字段导致回滚失败。步骤：先全量备份，再执行 migration，随后 5% 灰度观察 15 分钟，最后分批全量。" },
+    { "id": "C02", "label": "critical", "question": "deploy", "text": "不要直接全量替换：先确认 migration 可逆、旧代码兼容双写，再按 10%→50%→100% 灰度；一旦错误率超过 1% 立刻回滚，并检查连接池是否耗尽。" },
+    { "id": "C03", "label": "critical", "question": "rag", "text": "先看召回：把 chunk 从 1000 token 降到 300–500 通常能显著提升命中；但换 embedding 模型必须重建索引，否则相似度完全对不上。建议先跑 50 条标注 query 对比 recall@5 再决定。" },
+    { "id": "C04", "label": "critical", "question": "rag", "text": "核心问题是 rerank 缺失。加入 bge-reranker 对 top-50 重排后再取 top-5；注意 rerank 会明显增加延迟，线上必须设 200ms 超时并降级回原始召回。" },
+    { "id": "C05", "label": "critical", "question": "refund", "text": "先立即查支付流水确认是否重复扣费；确认后走原路退款，并在工单里记录 refund_id。注意不要先承诺到账时间——渠道退款通常 3–7 个工作日，承诺错误会引发二次投诉。" },
+    { "id": "C06", "label": "critical", "question": "refund", "text": "核心处理是：暂停该客户账户的自动续费，补发退款，并检查是否有批量重复扣费。若发现同一批次超过 10 笔异常，先升级到支付值班而不是逐个退款。" },
+    { "id": "C07", "label": "critical", "question": "review", "text": "这段代码有两个高风险：未校验 userId 直接拼 SQL 会 SQL 注入；未设置请求超时会拖垮线程池。修复：改成参数化查询，并给下游调用加 2s 超时和重试上限 2 次。" },
+    { "id": "C08", "label": "critical", "question": "review", "text": "核心结论：不要在请求路径里同步写大文件。建议改为写队列异步落盘；同时补上文件句柄释放，否则高并发下会 EMFILE。修复顺序：先加 try/finally 关闭流，再切异步。" },
+    { "id": "C09", "label": "critical", "question": "deploy", "text": "迁移前必须确认 v2 的 API 是向后兼容的；如果必须破坏兼容，就要先上双写适配层，再切读流量。关键风险是回滚窗口内新字段被旧节点忽略，导致数据不一致，回滚前要冻结写入。" },
+    { "id": "C10", "label": "critical", "question": "rag", "text": "核心瓶颈在切分：按固定 500 字切会把表格和代码块切断。改成按标题层级切、表格整块保留；同时给每个 chunk 加上父文档摘要。风险是 chunk 变大后 top-k 要相应减小，否则上下文会超预算。" },
+    { "id": "C11", "label": "critical", "question": "refund", "text": "重复扣费先做资金侧确认，再给客户回复；不要等客服口径统一。实操是：查交易号→原路退→发确认邮件→在 CRM 标记重复扣费原因；如果退款失败，2 小时内升级支付组处理。" },
+    { "id": "C12", "label": "critical", "question": "review", "text": "最危险的是日志里打印了完整 Authorization header，会泄露 token。立刻去掉该字段并轮换密钥；同时把日志级别从 debug 调回 info，否则线上日志量会放大十倍。" },
+
+    { "id": "M01", "label": "medium", "question": "deploy", "text": "用 Docker Compose 起 web、worker、postgres 三个服务就够了，这个量级不需要 Kubernetes。" },
+    { "id": "M02", "label": "medium", "question": "deploy", "text": "发布步骤是：先构建镜像并打 tag，再在测试环境跑 smoke test，通过后更新生产 compose 文件并执行 docker compose up -d。" },
+    { "id": "M03", "label": "medium", "question": "rag", "text": "RAG 是指检索增强生成：先从知识库找出相关片段，再把这些片段作为上下文交给生成模型回答。" },
+    { "id": "M04", "label": "medium", "question": "rag", "text": "先检查索引是否更新到最新文档；如果最近没重建索引，新文档不会被检索到。" },
+    { "id": "M05", "label": "medium", "question": "refund", "text": "先核对订单号和支付流水，确认是否真的重复扣费；如果确认，就按原支付渠道退款。" },
+    { "id": "M06", "label": "medium", "question": "refund", "text": "退款流程是：客服确认→财务审批→原路退回；一般 3 到 7 个工作日到账。" },
+    { "id": "M07", "label": "medium", "question": "review", "text": "建议把这段逻辑拆成两个函数：一个负责参数校验，一个负责业务处理，便于单测。" },
+    { "id": "M08", "label": "medium", "question": "review", "text": "这里可以直接用现成的 zod 做入参校验，把校验失败统一返回 400，并记录错误字段。" },
+    { "id": "M09", "label": "medium", "question": "deploy", "text": "先备份数据库，再执行迁移脚本；迁移完成后重启应用并验证健康检查接口。" },
+    { "id": "M10", "label": "medium", "question": "rag", "text": "把 embedding 换成多语言模型会更好，因为当前模型对中文长查询的语义匹配偏弱。" },
+    { "id": "M11", "label": "medium", "question": "refund", "text": "这个客户的请求属于重复扣费场景，应该走退款流程，并给客户发一封确认邮件。" },
+    { "id": "M12", "label": "medium", "question": "review", "text": "这个函数缺少单元测试；建议补上正常参数、空参数和超长输入三类用例。" },
+
+    { "id": "L01", "label": "low", "question": "deploy", "text": "注意：如果并发超过连接池上限，接口会开始返回 429。" },
+    { "id": "L02", "label": "low", "question": "deploy", "text": "可以试试把日志级别临时调到 debug，方便观察发布过程。" },
+    { "id": "L03", "label": "low", "question": "rag", "text": "注意：更换 embedding 模型后必须重建索引，否则检索结果会完全不相关。" },
+    { "id": "L04", "label": "low", "question": "rag", "text": "把 chunk 切小一点有时候会有帮助。" },
+    { "id": "L05", "label": "low", "question": "refund", "text": "记得在工单里记录退款原因，方便后续对账。" },
+    { "id": "L06", "label": "low", "question": "refund", "text": "如果客户情绪激动，可以先安抚并承诺 24 小时内回复。" },
+    { "id": "L07", "label": "low", "question": "review", "text": "这里最好加一个空值判断，避免 undefined 报错。" },
+    { "id": "L08", "label": "low", "question": "review", "text": "这个变量名可以改得更清晰一些，例如把 data 改成 userProfile。" },
+    { "id": "L09", "label": "low", "question": "deploy", "text": "另外，发布窗口最好避开业务高峰期。" },
+    { "id": "L10", "label": "low", "question": "rag", "text": "有些场景下增加 top-k 可能会提升召回率。" },
+    { "id": "L11", "label": "low", "question": "refund", "text": "退款到账后可以提醒客户查收短信通知。" },
+    { "id": "L12", "label": "low", "question": "review", "text": "代码风格上建议统一使用单引号，和仓库其他文件保持一致。" },
+
+    { "id": "N01", "label": "none", "question": "deploy", "text": "好的，我明白了，你继续说。" },
+    { "id": "N02", "label": "none", "question": "deploy", "text": "这个问题挺常见的，很多团队都遇到过。" },
+    { "id": "N03", "label": "none", "question": "rag", "text": "我先看看你提供的资料，然后给你一个整体思路。" },
+    { "id": "N04", "label": "none", "question": "refund", "text": "收到，我先了解一下情况。" },
+    { "id": "N05", "label": "none", "question": "review", "text": "这段代码整体看起来写得挺清晰的。" },
+    { "id": "N06", "label": "none", "question": "deploy", "text": "总之，发布是一个需要谨慎对待的过程。" },
+    { "id": "N07", "label": "none", "question": "rag", "text": "检索增强生成是近几年比较热门的方向。" },
+    { "id": "N08", "label": "none", "question": "refund", "text": "客户服务确实需要耐心和同理心。" },
+    { "id": "N09", "label": "none", "question": "review", "text": "感谢你提供的代码，下面我来分析一下。" },
+    { "id": "N10", "label": "none", "question": "deploy", "text": "不同公司的发布流程可能不太一样。" },
+    { "id": "N11", "label": "none", "question": "rag", "text": "这个问题涉及很多方面，我们一步步来看。" },
+    { "id": "N12", "label": "none", "question": "review", "text": "代码质量很重要，值得团队持续投入。" }
+  ]
+}

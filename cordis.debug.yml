@@ -1,0 +1,22 @@
+# Debug overlay for `dsh --profile web --patch ./cordis.debug.yml`.
+#
+# The relative entry path is anchored beside this patch file, so the overlay
+# loads the package straight from the workspace without installing it.
+# The client half still comes from this package's `dsh.client` manifest.
+- insert:
+    - id: jev-highlight
+      name: ./lib/index.js
+      config:
+        provider: jev
+        jevBaseUrl: https://api.typesafe.ai
+        model: jev-1.13.0
+        maxConcurrency: 8
+        requestTokenBudget: 24000
+        unitTokenBudget: 20000
+        cacheCapacity: 500
+        requestTimeoutMs: 30000
+        highlightThresholds:
+          critical: 0.85
+          medium: 0.65
+          low: 0.45
+        autoStart: true

@@ -1,0 +1,28 @@
+# Dependencies and local tooling
+node_modules/
+pnpm-debug.log*
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local runtime state and credentials
+.dsh/
+*.pem
+*.key
+
+# Logs and temporary build/test output
+*.log
+.tmp/
+coverage/
+
+# Raw evaluation artifacts and internal reports: large, contain local
+# paths and conversation snapshots. Public docs are allow-listed below.
+docs/*
+!docs/assets/
+!docs/assets/**
+!docs/jev-api.md
+!docs/dom-notes.md
+!docs/client-verification.md

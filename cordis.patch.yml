@@ -1,0 +1,29 @@
+# dsh-plugin bundle patch: insert the host entry. The plugin's client half is
+# registered from the package's `dsh.client` manifest automatically.
+#
+# Used when this package is installed as a profile bundle (`dsh plugin add`).
+# Override any value from the profile's own cordis.patch.yml.
+- insert:
+    - id: jev-highlight
+      name: '@local/dsh-jev-highlight'
+      config:
+        # Domestic default: StartLux-Decision via Bamboo Relay. The API key is
+        # typed into Settings → 插件 → Jev 高亮 (or STARTLUX_API_KEY / BAMBOO_API_KEY).
+        provider: startlux
+        startluxBaseUrl: https://api.bamboonode.dev/v1
+        startluxModel: startlux-decision-27b-autothink
+        startluxEndpointPath: /decisions
+        startluxThinkMode: never
+        # Jev fallback (switch provider: jev to use it).
+        jevBaseUrl: https://api.typesafe.ai
+        model: jev-1.13.0
+        maxConcurrency: 8
+        requestTokenBudget: 24000
+        unitTokenBudget: 20000
+        cacheCapacity: 500
+        requestTimeoutMs: 30000
+        highlightThresholds:
+          critical: 0.85
+          medium: 0.65
+          low: 0.45
+        autoStart: true

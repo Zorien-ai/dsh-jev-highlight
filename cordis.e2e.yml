@@ -1,0 +1,50 @@
+# E2E acceptance overlay — used ONLY by scripts/e2e-acceptance.mjs.
+#
+#   dsh web --patch .\cordis.e2e.yml --port 10301 --no-open
+#
+# It is a read-only overlay: it does not install, modify or replace any profile
+# file. Two differences from cordis.debug.yml:
+#
+#   1. the Jev host points at the local zero-dependency mock
+#      (scripts/mock-jev-server.mjs, default http://127.0.0.1:10399);
+#   2. the clean `web` profile's default model route is switched from the
+#      API-key route `deepseek-official` (needs DEEPSEEK_API_KEY) to the
+#      account route `deepseek-account`, which the already-signed-in DSH
+#      account serves. Without a working model the UI cannot stream an
+#      assistant answer, so criteria e/f/g/h (and the host's assistant-stream
+#      capture) cannot be exercised. Verified live on port 10301: the model
+#      selector shows DeepSeek-V4.1-Flash and answers stream normally.
+#
+# The real-key/live branch keeps using cordis.debug.yml.
+#
+# The throwaway `test-sandbox` profile starts from a fresh template whose
+# cordis.patch.yml is empty, so the client half would show the "预览版说明"
+# modal on every fresh browser profile and steal focus from the composer. The
+# shipped web profile acknowledges the current notice version here; mirror it
+# so the automation drives the composer without a modal overlay.
+- id: ui-settings-general
+  name: '@deepseek-ai/dsh-client-ui-settings-general'
+  config:
+    welcomeNoticeVersion: '2026-09-28.1'
+- id: agent-default-model
+  name: '@deepseek-ai/dsh-agent-default-model'
+  config:
+    provider: deepseek-account
+    model: deepseek-flash
+- insert:
+    - id: jev-highlight
+      name: ./lib/index.js
+      config:
+        provider: jev
+        jevBaseUrl: http://127.0.0.1:10399
+        model: jev-1.13.0
+        maxConcurrency: 8
+        requestTokenBudget: 24000
+        unitTokenBudget: 20000
+        cacheCapacity: 500
+        requestTimeoutMs: 30000
+        highlightThresholds:
+          critical: 0.85
+          medium: 0.65
+          low: 0.45
+        autoStart: true
