@@ -9,7 +9,10 @@
  */
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { mkdtempSync } from 'node:fs'
 import { createServer } from 'node:http'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import {
   ROUTE_DIAG,
   ROUTE_STATE,
@@ -28,6 +31,10 @@ import {
   textDeltaPayload,
   waitFor,
 } from './helpers.mjs'
+
+// Keep runtime settings (key/think-mode/threshold override files) out of the
+// developer's real $DSH_HOME so the expected levels below stay deterministic.
+process.env.DSH_HOME = mkdtempSync(join(tmpdir(), 'jev-e2e-mock-home-'))
 
 const THRESHOLDS = { critical: 0.85, medium: 0.65, low: 0.45 }
 const CREDENTIAL = { key: 'test-key', source: 'config' }
