@@ -2,7 +2,7 @@
 
 > 一个运行在 **DeepSeek Harness** 里的 Web 插件：它不修改 AI 的输出，只在你阅读时，把回答里「最该看的部分」高亮出来。
 >
-> GitHub 仓库：https://github.com/q93304989-bit/dsh-jev-highlight
+> GitHub 仓库：https://github.com/Zorien-ai/dsh-jev-highlight
 
 # 为什么想到做这个插件?
 
@@ -151,7 +151,7 @@ priority = 0.5×核心答案
 
 ```powershell
 # 从 GitHub 克隆（或直接使用你本地已有的目录）
-git clone https://github.com/q93304989-bit/dsh-jev-highlight.git
+git clone https://github.com/Zorien-ai/dsh-jev-highlight.git
 cd dsh-jev-highlight
 
 # 安装到你的 DSH profile
